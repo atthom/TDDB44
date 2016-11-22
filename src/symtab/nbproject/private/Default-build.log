@@ -1,0 +1,8 @@
+flex scanner.l
+g++ -MM -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -Wno-write-strings -Wno-unused-but-set-variable error.cc scanner.cc symtab.cc symbol.cc symtabtest.cc > Makefile.dependencies
+g++ -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -Wno-write-strings -Wno-unused-but-set-variable -c error.cc
+g++ -std=c++11 -g -Wall -Wno-unused-function -Wno-unused-variable -c scanner.cc
+g++ -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -Wno-write-strings -Wno-unused-but-set-variable -c symtab.cc
+g++ -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -Wno-write-strings -Wno-unused-but-set-variable -c symbol.cc
+g++ -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -Wno-write-strings -Wno-unused-but-set-variable -c symtabtest.cc
+g++ -o symtab error.o scanner.o symtab.o symbol.o symtabtest.o 

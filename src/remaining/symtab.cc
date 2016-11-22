@@ -494,9 +494,6 @@ char *symbol_table::fix_string(const char *old_str)
     return new_str;
 }
 
-
-
-
 /*** Hash table methods. ***/
 
 /* Uses the hash_x33 algorithm. Returns an index into the symbol table
@@ -532,14 +529,24 @@ sym_index symbol_table::current_environment()
 void symbol_table::open_scope()
 {
     /* Your code here */
+    block_table[current_level] = sym_pos;
+    current_level++;
 }
 
 
 /* Decrease the current_level by one. Return sym_index to new environment. */
 sym_index symbol_table::close_scope()
 {
-    /* Your code here */
-    return NULL_SYM;
+    /* Your code here */    
+    current_level--;
+    
+    for (int i = sym_pos; i < current_environment(); i--) {
+        // recompute hash
+        hash_table[hash(sym_pos)] = sym_table[i]->hash_link;
+        // link hash table to the hashlink of the symbol table at index i
+    }
+    
+    return current_environment();
 }
 
 
@@ -551,9 +558,34 @@ sym_index symbol_table::close_scope()
 sym_index symbol_table::lookup_symbol(const pool_index pool_p)
 {
     /* Your code here */
-    return NULL_SYM;
-}
+    //char* str_pool pool_lookup(pool_p);
+    // hash_index hash(pool_p);
+    // looks for a symbol with the same identifier as the argument in the string table
+    // return the symbol_table index.
+    // search is performed with the current_level and outwards
 
+    // pool_compare(current_element, pool_p);
+    
+    sym_index i = hash_table[hash(pool_p)];       
+    
+    while(i != NULL_SYM) {       
+        if(sym_tab->pool_compare(sym_table[i]->id, pool_p)) {
+            return i;
+        }
+        //get_s
+        i = sym_table[i]->hash_link;        
+    } 
+       
+    return NULL_SYM;
+    /*
+    sym_index i = hash_table[hash(pool_p)];   
+    if(sym_table[i]->back_link==hash(pool_p)) {
+        return i;
+    } else {
+        return NULL_SYM;
+    }    */
+    
+}
 
 /* Returns a symbol * given a sym_index, or NULL if no symbol found. */
 
@@ -635,13 +667,67 @@ void symbol_table::set_symbol_type(const sym_index sym_p,
    The parameter 'tag' can have one of eight different types, see the file symtabb.hh
    for the type definition of sym_type.
    Remember that the attribute 'tag' and 'id' will be set when creating
-   a new symbol inside the symbol constructor (take a look at symbol.cc).*/
+   a new symbol inside the symbol constructor (take a look at symbol.cc).
+ */
 
 sym_index symbol_table::install_symbol(const pool_index pool_p,
                                        const sym_type tag)
-{
+{    
+    
     /* Your code here */
-    return 0; // Return index to the symbol we just created.
+    if(lookup_symbol(pool_p)!=NULL_SYM) {
+        return lookup_symbol(pool_p);
+    }
+    //SHOULD CHECK IF MAX_NB_SYMBOL IS REACHED
+    // CHECK THE MAX BOCK 
+
+    symbol* s;
+    switch (tag) {
+      case SYM_ARRAY:
+          s = new array_symbol(pool_p);
+        break;
+      case SYM_FUNC:
+          s = new function_symbol(pool_p);
+        break;
+      case SYM_PROC:
+          s = new procedure_symbol(pool_p);
+        break;
+      case SYM_VAR:
+          s = new variable_symbol(pool_p);
+        break;
+      case SYM_PARAM:
+          s = new parameter_symbol(pool_p);
+        break;
+      case SYM_CONST:
+          s = new constant_symbol(pool_p);
+        break;
+      case SYM_NAMETYPE:
+          s = new nametype_symbol(pool_p);
+        break;
+      case SYM_UNDEF:
+          s = new symbol(pool_p);
+          // print something
+          cout << "Notice: your symbol is not reconized..." << flush;
+        break;
+    }
+    
+    ++sym_pos;
+  //  hash_table[hash(pool_p)] = sym_pos;
+        // hash_index hash(pool_p);
+    s->hash_link = hash_table[hash(pool_p)];
+    s->back_link = hash(pool_p);
+   // current_environment()
+   // block_table[current_level]  = sym_pos;
+    s->id = pool_p;
+    s->tag = SYM_UNDEF;
+    s->level = current_level;
+    
+    sym_table[sym_pos] = s;
+    hash_table[hash(pool_p)] = sym_pos;
+    
+   // block_table[current_level]
+   
+    return sym_pos; // Return index to the symbol we just created.
 }
 
 /* Enter a constant into the symbol table. The value is an integer. The type
@@ -666,9 +752,11 @@ sym_index symbol_table::enter_constant(position_information *pos,
     }
 
     // Set up the constant-specific fields.
+    
+    
     con->type = type;
     con->tag = SYM_CONST;
-
+    
     con->const_value.ival = ival;
     sym_table[sym_p] = con;
 
@@ -722,7 +810,6 @@ sym_index symbol_table::enter_variable(position_information *pos,
 {
     // Install a variable_symbol in the symbol table.
     sym_index sym_p = install_symbol(pool_p, SYM_VAR);
-
     // This extra mess is required for safe downcasting, so we can access
     // the fields specific to this subclass of symbol.
     symbol *tmp = sym_table[sym_p];
@@ -740,13 +827,12 @@ sym_index symbol_table::enter_variable(position_information *pos,
         // returns the original symbol
         return sym_p;
     }
-
+    
     variable_symbol *var = tmp->get_variable_symbol();
-
     // Set up the variable-specific fields.
     var->type = type;
     var->tag = SYM_VAR;
-
+       
     // This information is used later on when we allocate memory space on
     // activation frames. We need to know how many bytes the variable will
     // take up.
@@ -885,8 +971,32 @@ sym_index symbol_table::enter_function(position_information *pos,
 sym_index symbol_table::enter_procedure(position_information *pos,
                                         const pool_index pool_p)
 {
-    /* Your code here */
-    return NULL_SYM;
+    // Install a procedure_symbol in the symbol table.
+    // The function type will be set i labb3, the parser, because
+    // Diesel's grammar doesn't let us know the type of the symbol when
+    // the name is installed.
+    sym_index sym_p = install_symbol(pool_p, SYM_PROC);
+    
+    procedure_symbol *proc = sym_table[sym_p]->get_procedure_symbol();    
+    
+    // Make sure it's not already been declared.
+    if (proc->tag != SYM_UNDEF) {
+        type_error(pos) << "Redeclaration: " << proc << endl;
+        return sym_p; // returns the original symbol
+    }
+
+    // Set up the function-specific fields.
+    proc->tag = SYM_PROC;
+    // Parameters are added later on.
+    proc->last_parameter = NULL;
+
+    // This will grow as local variables and temporaries are added.
+    proc->ar_size = 0;
+    proc->label_nr = get_next_label();
+
+    sym_table[sym_p] = proc;
+
+    return sym_p;
 }
 
 
@@ -917,6 +1027,7 @@ sym_index symbol_table::enter_parameter(position_information *pos,
     // call enter_parameter. So the current_environment() is the new function
     // or procedure, not the one from which it's being called. If this part
     // is confusing, don't be afraid to ask someone. :)
+       
     symbol *tmp = sym_table[current_environment()];
 
     parameter_symbol *tmp_param;

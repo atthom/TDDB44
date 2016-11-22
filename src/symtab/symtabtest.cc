@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
     position_information *pos = new position_information();
 
     cout << "Starting symtabtest.cc...\n" << flush;
-
+    
 #if TEST_TRACE1
     // Used for debugging printouts.
     pool_index a_var, b_var, c_var;
@@ -43,12 +43,14 @@ int main(int argc, char **argv) {
     // compiling using 'make' in this dir. It will print a symbol table.
     // Compare the output from your program with symtab.trace1 file which
     // resides in the course home directory.
-
 /*program prog;                */ sym_tab->enter_procedure(pos, sym_tab->pool_install("prog"));
 /*var                        */ sym_tab->open_scope();
+                                
 /*   a : integer;            */ a_var = sym_tab->pool_install("a");
+                               
 /*                            */ ai = sym_tab->enter_variable(pos, a_var, integer_type);
-                            // cout << sym_tab->get_symbol(ai) << endl;
+                                 
+                           //  cout << sym_tab->get_symbol(ai) << endl;
 
                             // Note: Uncomment this to simulate a redeclaration
                             //       of the variable "a". Your symbol table should
@@ -59,6 +61,7 @@ int main(int argc, char **argv) {
 #endif
 /*   b : integer;            */ b_var = sym_tab->pool_install("b");
 /*                            */ bi = sym_tab->enter_variable(pos, b_var, integer_type);
+                                 
                             // cout << sym_tab->get_symbol(bi) << endl;
 /*   c : integer;            */ c_var = sym_tab->pool_install("c");
 /*                            */ ci = sym_tab->enter_variable(pos, c_var, integer_type);
@@ -150,6 +153,7 @@ int main(int argc, char **argv) {
 
     cout << "Current environment: " << sym_tab->current_environment() << endl;
 #endif
+    sym_tab->print(3);
     sym_tab->print(2);
     sym_tab->print(1);
 
