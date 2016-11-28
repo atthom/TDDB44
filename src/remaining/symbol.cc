@@ -84,9 +84,6 @@ nametype_symbol::nametype_symbol(const pool_index pool_p) :
 {
 }
 
-
-
-
 /*** Functions for printing symbol information ***/
 
 // This is the default detail level of information given when printing a
