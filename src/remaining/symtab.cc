@@ -18,8 +18,6 @@ sym_index void_type;
 sym_index integer_type;
 sym_index real_type;
 
-
-
 /*** The symbol_table class - watch out, it's big. ***/
 
 /* Constructor: allocates the data members. The symbol table itself is just
