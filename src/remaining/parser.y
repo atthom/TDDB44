@@ -549,9 +549,11 @@ stmt_list       : stmt
                     position_information *pos =
                         new position_information(@1.first_line,
                                                  @1.first_column);
-
-                    $$ = new ast_stmt_list(pos, $1);
-
+                    if($1!=NULL) {
+                      $$ = new ast_stmt_list(pos, $1);
+                    } else {
+                      $$ = NULL;
+                    }
                 }
                 | stmt_list T_SEMICOLON stmt
                 {
@@ -559,10 +561,13 @@ stmt_list       : stmt
                     position_information *pos =
                         new position_information(@1.first_line,
                                                  @1.first_column);
-                  $$ = new ast_stmt_list(pos, $3, $1);
+                  if($3!=NULL) {
+                       $$ = new ast_stmt_list(pos, $3, $1);
+                   } else {
+                       $$ = $1;
+                   }
                 }
                 ;
-
 
 stmt            : T_IF expr T_THEN stmt_list elsif_list else_part T_END
                 {
