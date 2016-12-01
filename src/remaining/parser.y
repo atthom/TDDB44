@@ -239,6 +239,26 @@ const_decl      : T_IDENT T_EQ integer T_SEMICOLON
 
 
                 }
+                | T_IDENT T_EQ real
+                {
+                    /* Your code here */
+                    cout << "missing semicolon" << endl;
+                }
+                | T_IDENT T_EQ integer
+                {
+                    /* Your code here */
+                    cout << "missing semicolon" << endl;
+                }
+                | T_IDENT T_EQ const_id
+                {
+                    /* Your code here */
+                    cout << "missing semicolon" << endl;
+                }
+                | T_IDENT T_EQ T_STRINGCONST
+                {
+                    /* Your code here */
+                    cout << "missing semicolon" << endl;
+                }
 
                 ;
 
@@ -624,6 +644,16 @@ stmt            : T_IF expr T_THEN stmt_list elsif_list else_part T_END
                     /* Your code here */
                     $$ = NULL;
                 }
+                | error
+                {
+                    /* Your code here */
+                    yyerrok;
+                    position_information *pos =
+                        new position_information(@1.first_line,
+                                                 @1.first_column);
+                    cout << "Invalid statement line : " << pos->get_line() << ", column : " << pos->get_column() << endl;
+                    $$ = NULL;
+                }
                 ;
 
 lvariable       : lvar_id
@@ -638,6 +668,11 @@ lvariable       : lvar_id
                 }
                 | array_id T_LEFTBRACKET error T_RIGHTBRACKET
                 {
+                    $$ = NULL;
+                }
+                | array_id T_LEFTBRACKET error
+                {
+                    cout << "missing bracket." << endl;
                     $$ = NULL;
                 }
                 ;
@@ -658,6 +693,12 @@ rvariable       : rvar_id
                         new position_information(@1.first_line,
                                                  @1.first_column);
                     $$ = new ast_indexed(pos, $1, $3);
+                }
+                | array_id T_LEFTBRACKET expr
+                {
+                    /* Your code here */
+                    cout << "Missing bracket." << endl;
+                    $$ = NULL;
                 }
 
                 ;

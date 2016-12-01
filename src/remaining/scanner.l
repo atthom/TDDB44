@@ -46,7 +46,7 @@ STRING '[^\n]*'
 SPECIALCHAR ^[a-z0-9]
 IDENTIFIER [a-z]([a-z]|{DIGIT})*
 LETTERS [a-z]*
-SPACE " "*
+SPACE [ \t]*
 COMMENT "{"
 COMMENT1 "{".*"}"
 /* {DIGIT}+"."{DIGIT}*   \}.*$ */
@@ -58,11 +58,11 @@ COMMENT1 "{".*"}"
    identifiers, integers, reals, and whitespace. */
 %%
 
-{SPACE}             {
-        yylloc.first_line = yylineno;
-        yylloc.first_column = column;
-        column += yyleng;
-      }
+{SPACE}      {
+                      yylloc.first_line = yylineno;
+                      yylloc.first_column = column;
+                      column += yyleng;
+                            }
 
 \.                       {
                             yylloc.first_line = yylineno;
