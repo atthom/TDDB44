@@ -52,6 +52,8 @@ void semantic::check_parameters(ast_id *call_id,
                                 ast_expr_list *param_list)
 {
     /* Your code here */
+    param_list->type_check();
+
 }
 
 
@@ -115,6 +117,12 @@ sym_index ast_stmt_list::type_check()
 sym_index ast_expr_list::type_check()
 {
     /* Your code here */
+    if(preceding!= NULL) {
+      preceding->type_check();
+    }
+    if(last_expr!=NULL) {
+      last_expr->type_check();
+    }
     return void_type;
 }
 
@@ -124,6 +132,12 @@ sym_index ast_expr_list::type_check()
 sym_index ast_elsif_list::type_check()
 {
     /* Your code here */
+    if(preceding!= NULL) {
+      preceding->type_check();
+    }
+    if(last_elsif!=NULL) {
+      last_elsif->type_check();
+    }
     return void_type;
 }
 
@@ -143,7 +157,10 @@ sym_index ast_id::type_check()
 sym_index ast_indexed::type_check()
 {
     /* Your code here */
-    return void_type;
+    if(index!=NULL && index->type_check()!=integer_type) {
+      type_error(pos) << " index must be integer type." << endl;
+     }
+    return id->type_check();
 }
 
 
@@ -154,25 +171,41 @@ sym_index ast_indexed::type_check()
 sym_index semantic::check_binop1(ast_binaryoperation *node)
 {
     /* Your code here */
+
+    sym_index ll = node->left->type_check();
+    sym_index rr = node->right->type_check();
+
+    if (ll != rr)
+        {
+      if(ll == integer_type) {
+          // how to cast
+          node->left = new ast_cast(node->left->pos,node->left);
+      }
+      if(rr == integer_type)  {
+        // how to cast
+        node->right = new ast_cast(node->right->pos, node->right);
+      }
+   }
+
     return void_type; // You don't have to use this method but it might be convenient
 }
 
 sym_index ast_add::type_check()
 {
     /* Your code here */
-    return void_type;
+   return type_checker->check_binop1(this);
 }
 
 sym_index ast_sub::type_check()
 {
     /* Your code here */
-    return void_type;
+    return type_checker->check_binop1(this);
 }
 
 sym_index ast_mult::type_check()
 {
     /* Your code here */
-    return void_type;
+    return type_checker->check_binop1(this);
 }
 
 /* Divide is a special case, since it always returns real. We make sure the
@@ -180,7 +213,17 @@ sym_index ast_mult::type_check()
 sym_index ast_divide::type_check()
 {
     /* Your code here */
-    return void_type;
+    sym_index ll = left->type_check();
+    sym_index rr = right->type_check();
+    if(ll == integer_type) {
+        // how to cast
+        left = new ast_cast(left->pos, left);
+    }
+    if(rr == integer_type)  {
+      // how to cast
+      right = new ast_cast(left->pos, right);
+    }
+    return type_checker->check_binop1(this);
 }
 
 
@@ -194,31 +237,42 @@ sym_index ast_divide::type_check()
 sym_index semantic::check_binop2(ast_binaryoperation *node, string s)
 {
     /* Your code here */
-    return void_type;
+    sym_index ll = node->left->type_check();
+    sym_index rr = node->right->type_check();
+
+    if(ll != integer_type) {
+      type_error(node->left->pos) << " invalid BINOP2 left operator with operand :" << s << endl;
+    }
+
+    if(rr != integer_type) {
+      type_error(node->right->pos) << " invalid BINOP2 right operator with operand :" << s << endl;
+    }
+
+    return integer_type;
 }
 
 sym_index ast_or::type_check()
 {
     /* Your code here */
-    return void_type;
+    return type_checker->check_binop2(this, " OR ");
 }
 
 sym_index ast_and::type_check()
 {
     /* Your code here */
-    return void_type;
+    return type_checker->check_binop2(this, " AND ");
 }
 
 sym_index ast_idiv::type_check()
 {
     /* Your code here */
-    return void_type;
+    return type_checker->check_binop2(this, " DIV INTEGER ");
 }
 
 sym_index ast_mod::type_check()
 {
     /* Your code here */
-    return void_type;
+    return type_checker->check_binop2(this, " MOD ");
 }
 
 
@@ -228,31 +282,44 @@ sym_index ast_mod::type_check()
 sym_index semantic::check_binrel(ast_binaryrelation *node)
 {
     /* Your code here */
-    return void_type;
+
+    sym_index ll = node->left->type_check();
+    sym_index rr = node->right->type_check();
+    if(ll != rr) {
+      if(ll == integer_type) {
+          // how to cast
+          node->right = new ast_cast(node->right->pos, node->right);
+      } else {
+        // how to cast
+        node->left = new ast_cast(node->left->pos, node->left);
+      }
+    }
+
+    return integer_type;
 }
 
 sym_index ast_equal::type_check()
 {
     /* Your code here */
-    return void_type;
+    return type_checker->check_binrel(this);
 }
 
 sym_index ast_notequal::type_check()
 {
     /* Your code here */
-    return void_type;
+    return type_checker->check_binrel(this);
 }
 
 sym_index ast_lessthan::type_check()
 {
     /* Your code here */
-    return void_type;
+    return type_checker->check_binrel(this);
 }
 
 sym_index ast_greaterthan::type_check()
 {
-    /* Your code here */
-    return void_type;
+  /* Your code here */
+  return type_checker->check_binrel(this);
 }
 
 
@@ -262,6 +329,8 @@ sym_index ast_greaterthan::type_check()
 sym_index ast_procedurecall::type_check()
 {
     /* Your code here */
+    type_checker->check_parameters(id, parameter_list);
+
     return void_type;
 }
 
@@ -269,7 +338,18 @@ sym_index ast_procedurecall::type_check()
 sym_index ast_assign::type_check()
 {
     /* Your code here */
-    return void_type;
+    if(lhs->type_check() != rhs->type_check()) {
+      if(lhs->type_check()==real_type) {
+
+        // HOW CAN I CAST mmfmfmf
+       rhs = new ast_cast(rhs->pos, rhs);
+       // maybe ?
+      } else {
+          type_error(pos) << " can't cast real into integer." << endl;
+      }
+    }
+
+    return lhs->type_check();
 }
 
 
@@ -290,6 +370,14 @@ sym_index ast_while::type_check()
 sym_index ast_if::type_check()
 {
     /* Your code here */
+    if(condition !=NULL && condition->type_check()!=integer_type) {
+        type_error(pos) << " invalid condition : shoud be integer type" << endl;
+    }
+
+    if(body !=NULL ) {
+        body->type_check();
+    }
+
     return void_type;
 }
 
@@ -341,25 +429,43 @@ sym_index ast_return::type_check()
 sym_index ast_functioncall::type_check()
 {
     /* Your code here */
+    type_checker->check_parameters(id, parameter_list);
+
     return void_type;
 }
 
 sym_index ast_uminus::type_check()
 {
     /* Your code here */
-    return void_type;
+    if(expr !=NULL && expr->type_check()!=integer_type) {
+      type_error(pos) << " invalid UMINUS : shoud be integer type" << endl;
+    }
+
+    return integer_type;
 }
 
 sym_index ast_not::type_check()
 {
     /* Your code here */
-    return void_type;
+    if(expr !=NULL && expr->type_check()!=integer_type) {
+        type_error(pos) << " invalid NOT : shoud be integer type" << endl;
+    }
+
+    return integer_type;
 }
 
 
 sym_index ast_elsif::type_check()
 {
     /* Your code here */
+    if(condition !=NULL && condition->type_check()!=integer_type) {
+        type_error(pos) << " invalid condition elsif : shoud be integer type" << endl;
+    }
+
+    if(body !=NULL ) {
+        body->type_check();
+    }
+
     return void_type;
 }
 

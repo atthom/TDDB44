@@ -9,7 +9,6 @@ class semantic;
 // Defined in semantic.cc.
 extern semantic *type_checker;
 
-
 class semantic
 {
 private:
