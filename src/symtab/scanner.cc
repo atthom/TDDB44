@@ -606,9 +606,11 @@ char *yytext;
 #include <stdlib.h>
 #include <string.h>
 
-#include "scanner.hh"
+//#include "scanner.hh"
 // This is where you put #include directives as needed for later labs.
 // include "ast.hh", parser.hh" in that order
+#include "ast.hh"
+#include "parser.hh"
 
 int column = 0;
 
@@ -623,7 +625,7 @@ extern YYLTYPE yylloc; // Used for position information, see below.
 /* Your code should be entered below the %%. Expressions to handle the
    following: Diesel comments, Diesel string constants, Diesel
    identifiers, integers, reals, and whitespace. */
-#line 627 "scanner.cc"
+#line 629 "scanner.cc"
 
 #define INITIAL 0
 #define c_comment 1
@@ -812,10 +814,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 57 "scanner.l"
+#line 59 "scanner.l"
 
 
-#line 819 "scanner.cc"
+#line 821 "scanner.cc"
 
 	if ( !(yy_init) )
 		{
@@ -910,7 +912,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 59 "scanner.l"
+#line 61 "scanner.l"
 {
         yylloc.first_line = yylineno;
         yylloc.first_column = column;
@@ -919,7 +921,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 65 "scanner.l"
+#line 67 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -929,7 +931,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 71 "scanner.l"
+#line 73 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -939,7 +941,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 77 "scanner.l"
+#line 79 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -949,7 +951,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 83 "scanner.l"
+#line 85 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -959,7 +961,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 89 "scanner.l"
+#line 91 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -969,7 +971,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 95 "scanner.l"
+#line 97 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -979,7 +981,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 101 "scanner.l"
+#line 103 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -989,7 +991,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 107 "scanner.l"
+#line 109 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -999,7 +1001,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 113 "scanner.l"
+#line 115 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -1009,7 +1011,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 119 "scanner.l"
+#line 121 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -1019,7 +1021,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 125 "scanner.l"
+#line 127 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -1029,7 +1031,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 131 "scanner.l"
+#line 133 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -1039,7 +1041,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 137 "scanner.l"
+#line 139 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -1049,7 +1051,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 143 "scanner.l"
+#line 145 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -1059,7 +1061,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 149 "scanner.l"
+#line 151 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -1069,7 +1071,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 155 "scanner.l"
+#line 157 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -1079,7 +1081,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 161 "scanner.l"
+#line 163 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -1089,7 +1091,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 169 "scanner.l"
+#line 171 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1099,7 +1101,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 175 "scanner.l"
+#line 177 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1109,7 +1111,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 181 "scanner.l"
+#line 183 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1119,7 +1121,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 187 "scanner.l"
+#line 189 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1129,7 +1131,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 193 "scanner.l"
+#line 195 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1139,7 +1141,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 199 "scanner.l"
+#line 201 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1149,7 +1151,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 205 "scanner.l"
+#line 207 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1159,7 +1161,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 211 "scanner.l"
+#line 213 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1169,7 +1171,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 217 "scanner.l"
+#line 219 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1179,7 +1181,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 223 "scanner.l"
+#line 225 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1189,7 +1191,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 229 "scanner.l"
+#line 231 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1199,7 +1201,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 235 "scanner.l"
+#line 237 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1209,7 +1211,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 241 "scanner.l"
+#line 243 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1219,7 +1221,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 247 "scanner.l"
+#line 249 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1229,7 +1231,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 253 "scanner.l"
+#line 255 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1239,7 +1241,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 259 "scanner.l"
+#line 261 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1249,7 +1251,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 265 "scanner.l"
+#line 267 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1259,7 +1261,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 271 "scanner.l"
+#line 273 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1269,7 +1271,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 277 "scanner.l"
+#line 279 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1279,7 +1281,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 283 "scanner.l"
+#line 285 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1289,7 +1291,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 289 "scanner.l"
+#line 291 "scanner.l"
 {
   yylloc.first_line = yylineno;
   yylloc.first_column = column;
@@ -1299,7 +1301,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 297 "scanner.l"
+#line 299 "scanner.l"
 {
 		yylloc.first_line = yylineno;
 		yylloc.first_column = column;
@@ -1311,7 +1313,7 @@ YY_RULE_SETUP
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 305 "scanner.l"
+#line 307 "scanner.l"
 {
     yylloc.first_line = yylineno;
     yylloc.first_column = column;
@@ -1324,17 +1326,17 @@ case 42:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 312 "scanner.l"
+#line 314 "scanner.l"
 column = 0; /* Skip single-line comment */
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 313 "scanner.l"
+#line 315 "scanner.l"
 column=0;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 315 "scanner.l"
+#line 317 "scanner.l"
 {
                             column += yyleng;
                             BEGIN(c_comment);
@@ -1344,7 +1346,7 @@ YY_RULE_SETUP
 
 case 45:
 YY_RULE_SETUP
-#line 323 "scanner.l"
+#line 325 "scanner.l"
 {
                             column += 2;
                             BEGIN(INITIAL);
@@ -1352,7 +1354,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 328 "scanner.l"
+#line 330 "scanner.l"
 {
         column += 2;
 			BEGIN(INITIAL);
@@ -1360,7 +1362,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 333 "scanner.l"
+#line 335 "scanner.l"
 {
                             column += 2;
                             yyerror("Suspicious comment");
@@ -1368,17 +1370,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 337 "scanner.l"
+#line 339 "scanner.l"
 column++; /* Skip stuff in comments */
 	YY_BREAK
 case 49:
 /* rule 49 can match eol */
 YY_RULE_SETUP
-#line 338 "scanner.l"
+#line 340 "scanner.l"
 column = 0;
 	YY_BREAK
 case YY_STATE_EOF(c_comment):
-#line 339 "scanner.l"
+#line 341 "scanner.l"
 {
                             yyerror("Unterminated comment");
                             yyterminate();
@@ -1387,7 +1389,7 @@ case YY_STATE_EOF(c_comment):
 
 case 50:
 YY_RULE_SETUP
-#line 345 "scanner.l"
+#line 347 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -1398,7 +1400,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 352 "scanner.l"
+#line 354 "scanner.l"
 {
                             yylloc.first_line = yylineno;
                             yylloc.first_column = column;
@@ -1409,7 +1411,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 359 "scanner.l"
+#line 361 "scanner.l"
 {
         yylloc.first_line = yylineno;
         yylloc.first_column = column;
@@ -1421,27 +1423,27 @@ YY_RULE_SETUP
 case 53:
 /* rule 53 can match eol */
 YY_RULE_SETUP
-#line 367 "scanner.l"
+#line 369 "scanner.l"
 {
       column = 0;
     }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(c_string):
-#line 371 "scanner.l"
+#line 373 "scanner.l"
 yyterminate();
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 372 "scanner.l"
+#line 374 "scanner.l"
 yyerror("Illegal character");
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 373 "scanner.l"
+#line 375 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1445 "scanner.cc"
+#line 1447 "scanner.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2449,4 +2451,4 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 373 "scanner.l"
+#line 375 "scanner.l"

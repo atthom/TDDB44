@@ -22,7 +22,7 @@ class ast_optimizer
 {
 /* You might want to add your own methods to this header file when
    solving the optimization lab. */
-    
+
 public:
 
     // This is the interface to parser.y. Sending in a function body as
@@ -37,6 +37,8 @@ public:
     // so the ast_* nodes can access it. Another solution would be to make it
     // a static method in the optimize.cc file... A matter of preference.
     ast_expression *fold_constants(ast_expression *);
+
+    void optimize_binop(ast_binaryoperation *node);
 };
 
 

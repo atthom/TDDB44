@@ -43,6 +43,10 @@ bool semantic::chk_param(ast_id *env,
                         ast_expr_list *actuals)
 {
     /* Your code here */
+
+    if()
+    actuals->preceding;
+
     return true;
 }
 
@@ -52,7 +56,25 @@ void semantic::check_parameters(ast_id *call_id,
                                 ast_expr_list *param_list)
 {
     /* Your code here */
-    param_list->type_check();
+    symbol * symbol_called = sym_tab->get_symbol(call_id->sym_p);
+
+    if(param_list!= NULL) {
+      param_list->type_check();
+    }
+    parameter_symbol* list_from_symtab;
+
+    if(symbol_called->tag==SYM_FUNC) {
+      function_symbol *func = symbol_called->get_function_symbol();
+      list_from_symtab =  func->last_parameter;
+
+    } else if(symbol_called->tag==SYM_PROC) {
+      procedure_symbol* proc = symbol_called->get_procedure_symbol();
+      list_from_symtab =  proc->last_parameter;
+    } else {
+      type_error() << " what are you calling there ?" << endl;
+    }
+
+    chk_param(call_id, list_from_symtab, param_list);
 
 }
 

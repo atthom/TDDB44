@@ -164,7 +164,7 @@ protected:
 
     // All these methods are concerned with printing the AST.
     void indent(ostream &);
-    
+
     void indent_more();
 
     void indent_less();

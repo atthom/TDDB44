@@ -39,6 +39,26 @@ bool ast_optimizer::is_binop(ast_expression *node)
     }
 }
 
+void ast_optimizer::optimize_binop(ast_binaryoperation *node) {
+//  ast_expression *left;
+
+//  ast_expression *right;
+
+/*
+  switch (node->tag) {
+  case AST_ADD:
+  case AST_SUB:
+  case AST_OR:
+  case AST_AND:
+  case AST_MULT:
+  case AST_DIVIDE:
+  case AST_IDIV:
+  case AST_MOD:
+
+}*/
+
+
+}
 
 
 /* We overload this method for the various ast_node subclasses that can
@@ -126,6 +146,7 @@ void ast_indexed::optimize()
 ast_expression *ast_optimizer::fold_constants(ast_expression *node)
 {
     /* Your code here */
+
     return NULL;
 }
 
