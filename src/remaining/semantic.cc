@@ -48,18 +48,20 @@ bool semantic::chk_param(ast_id *env,
       return true;
     }
 
-    if(actuals!=NULL && formals ==NULL) {
-      type_error(env->pos) << " overcharged procedure or function call" << endl;
+    if(actuals != NULL && formals ==NULL) {
+      type_error(env->pos) << " Too may arguments given" << endl;
       return false;
     }
-    if(actuals==NULL && formals !=NULL) {
-      type_error(env->pos) << " procedure or function need more arguments" << endl;
+
+    if(actuals== NULL && formals != NULL) {
+      type_error(env->pos) << " you need more arguments to call this function" << endl;
       return false;
     }
-    //ast_expression* expr = new ast_expression(env->pos, formals->type);
-    sym_index actual_type = actuals->last_expr->type_check();
-    if(formals->type != actual_type) {
-        type_error(env->pos) << " wrong type " << formals->type << " needed but " << actual_type << " given" << endl;
+
+    sym_index ast_type = actuals->last_expr->type_check();
+
+    if(formals->type != ast_type) {
+        type_error(env->pos) << " wrong type " << formals->type << " needed but " << ast_type << " given" << endl;
         return false;
     } else {
       return chk_param(env, formals->preceding, actuals->preceding) ;
@@ -196,7 +198,7 @@ sym_index ast_indexed::type_check()
 {
     /* Your code here */
     if(index!=NULL && index->type_check()!=integer_type) {
-      type_error(pos) << " index must be integer type." << endl;
+      type_error(index->pos) << " index must be integer type." << endl;
      }
     return id->type_check();
 }
@@ -213,37 +215,42 @@ sym_index semantic::check_binop1(ast_binaryoperation *node)
     sym_index ll = node->left->type_check();
     sym_index rr = node->right->type_check();
 
-    if (ll != rr)
-        {
-      if(ll == integer_type) {
-          // how to cast
-          node->left = new ast_cast(node->left->pos,node->left);
-      }
-      if(rr == integer_type)  {
-        // how to cast
-        node->right = new ast_cast(node->right->pos, node->right);
-      }
-   }
+    if (ll==rr && (ll==integer_type || ll==real_type) ) {
+      /* code */
+      return ll;
+    }
 
+    if(ll == integer_type && rr == real_type) {
+        node->left = new ast_cast(node->left->pos,node->left);
+        return real_type;
+    }
+
+    if(ll == real_type && rr == integer_type) {
+        node->right = new ast_cast(node->right->pos, node->right);
+        return real_type;
+    }
+
+    type_error(node->pos) << " Unknown type operation";
     return void_type; // You don't have to use this method but it might be convenient
 }
 
 sym_index ast_add::type_check()
 {
     /* Your code here */
-   return type_checker->check_binop1(this);
+
+   return type = type_checker->check_binop1(this);
 }
 
 sym_index ast_sub::type_check()
 {
     /* Your code here */
-    return type_checker->check_binop1(this);
+    return type =  type_checker->check_binop1(this);
 }
 
 sym_index ast_mult::type_check()
 {
     /* Your code here */
-    return type_checker->check_binop1(this);
+    return type = type_checker->check_binop1(this);
 }
 
 /* Divide is a special case, since it always returns real. We make sure the
@@ -261,7 +268,7 @@ sym_index ast_divide::type_check()
       // how to cast
       right = new ast_cast(left->pos, right);
     }
-    return type_checker->check_binop1(this);
+    return type = type_checker->check_binop1(this);
 }
 
 
@@ -292,25 +299,25 @@ sym_index semantic::check_binop2(ast_binaryoperation *node, string s)
 sym_index ast_or::type_check()
 {
     /* Your code here */
-    return type_checker->check_binop2(this, " OR ");
+    return type = type_checker->check_binop2(this, " OR ");
 }
 
 sym_index ast_and::type_check()
 {
     /* Your code here */
-    return type_checker->check_binop2(this, " AND ");
+    return type =  type_checker->check_binop2(this, " AND ");
 }
 
 sym_index ast_idiv::type_check()
 {
     /* Your code here */
-    return type_checker->check_binop2(this, " DIV INTEGER ");
+    return type =  type_checker->check_binop2(this, " DIV INTEGER ");
 }
 
 sym_index ast_mod::type_check()
 {
     /* Your code here */
-    return type_checker->check_binop2(this, " MOD ");
+    return type =  type_checker->check_binop2(this, " MOD ");
 }
 
 
@@ -339,25 +346,25 @@ sym_index semantic::check_binrel(ast_binaryrelation *node)
 sym_index ast_equal::type_check()
 {
     /* Your code here */
-    return type_checker->check_binrel(this);
+    return type = type_checker->check_binrel(this);
 }
 
 sym_index ast_notequal::type_check()
 {
     /* Your code here */
-    return type_checker->check_binrel(this);
+    return type = type_checker->check_binrel(this);
 }
 
 sym_index ast_lessthan::type_check()
 {
     /* Your code here */
-    return type_checker->check_binrel(this);
+    return type = type_checker->check_binrel(this);
 }
 
 sym_index ast_greaterthan::type_check()
 {
   /* Your code here */
-  return type_checker->check_binrel(this);
+  return type = type_checker->check_binrel(this);
 }
 
 

@@ -44,7 +44,7 @@ CARRIAGE \n
 STRING_UNFINISHED '[^'\n]*\n
 STRING '[^\n]*'
 SPECIALCHAR ^[a-z0-9]
-IDENTIFIER [a-z]([a-z]|{DIGIT})*
+IDENTIFIER [a-z]([a-z]|{DIGIT}|[_])*
 LETTERS [a-z]*
 SPACE [ \t]*
 COMMENT "{"
