@@ -44,10 +44,26 @@ bool semantic::chk_param(ast_id *env,
 {
     /* Your code here */
 
-    if()
-    actuals->preceding;
+    if(actuals==NULL && formals ==NULL) {
+      return true;
+    }
 
-    return true;
+    if(actuals!=NULL && formals ==NULL) {
+      type_error(env->pos) << " overcharged procedure or function call" << endl;
+      return false;
+    }
+    if(actuals==NULL && formals !=NULL) {
+      type_error(env->pos) << " procedure or function need more arguments" << endl;
+      return false;
+    }
+    //ast_expression* expr = new ast_expression(env->pos, formals->type);
+    sym_index actual_type = actuals->last_expr->type_check();
+    if(formals->type != actual_type) {
+        type_error(env->pos) << " wrong type " << formals->type << " needed but " << actual_type << " given" << endl;
+        return false;
+    } else {
+      return chk_param(env, formals->preceding, actuals->preceding) ;
+    }
 }
 
 
