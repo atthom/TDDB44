@@ -44,6 +44,12 @@ bool ast_optimizer::is_const(ast_expression* expr) {
   if(expr->tag == AST_INTEGER || expr->tag == AST_REAL) {
     return true;
   }
+
+  if(expr->tag == AST_ID && expr->type == SYM_CONST) {
+    return true;
+  }
+
+
   return false;
 }
 
