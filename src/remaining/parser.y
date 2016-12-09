@@ -235,7 +235,19 @@ const_decl      : T_IDENT T_EQ integer T_SEMICOLON
                         new position_information(@1.first_line,
                                                  @1.first_column);
 
-                    sym_tab->enter_constant(pos,$1, real_type, $3->sym_p);
+                    symbol *sym = sym_tab->get_symbol($3->sym_p);
+                    constant_symbol* third = sym->get_constant_symbol();
+
+                    if (third->type == real_type) {
+
+                      sym_tab->enter_constant(pos,$1, third->type, third->const_value.rval);
+
+                    } else if(third->type == integer_type) {
+
+                      sym_tab->enter_constant(pos,$1, third->type, third->const_value.ival);
+
+                    }
+
 
 
                 }

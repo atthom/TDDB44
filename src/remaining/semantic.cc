@@ -10,7 +10,6 @@ semantic *type_checker = new semantic();
    a new block) and set to true if we find an ast_return node. See below. */
 static bool has_return = false;
 
-
 /* Interface for type checking a block of code represented as an AST node. */
 void semantic::do_typecheck(symbol *env, ast_stmt_list *body)
 {
@@ -36,7 +35,6 @@ void semantic::do_typecheck(symbol *env, ast_stmt_list *body)
     }
 }
 
-
 /* Compare formal vs. actual parameters recursively. */
 bool semantic::chk_param(ast_id *env,
                         parameter_symbol *formals,
@@ -61,13 +59,20 @@ bool semantic::chk_param(ast_id *env,
     sym_index ast_type = actuals->last_expr->type_check();
 
     if(formals->type != ast_type) {
+
+      if(formals->type == real_type) {
+        actuals->last_expr = new ast_cast(actuals->last_expr->pos, actuals->last_expr);
+        return chk_param(env, formals->preceding, actuals->preceding) ;
+
+      } else {
         type_error(env->pos) << " wrong type " << formals->type << " needed but " << ast_type << " given" << endl;
         return false;
+      }
+
     } else {
       return chk_param(env, formals->preceding, actuals->preceding) ;
     }
 }
-
 
 /* Check formal vs. actual parameters at procedure/function calls. */
 void semantic::check_parameters(ast_id *call_id,
@@ -116,6 +121,7 @@ sym_index ast_statement::type_check()
 
 sym_index ast_expression::type_check()
 {
+    type_error(pos);
     fatal("Trying to type check abstract class ast_expression.");
     return void_type;
 }
@@ -167,7 +173,6 @@ sym_index ast_expr_list::type_check()
 }
 
 
-
 /* Type check an elsif list. */
 sym_index ast_elsif_list::type_check()
 {
@@ -181,7 +186,6 @@ sym_index ast_elsif_list::type_check()
     return void_type;
 }
 
-
 /* "type check" an indentifier. We need to separate nametypes from other types
    here, since all nametypes are of type void, but should return an index to
    itself in the symbol table as far as typechecking is concerned. */
@@ -193,17 +197,14 @@ sym_index ast_id::type_check()
     return sym_p;
 }
 
-
 sym_index ast_indexed::type_check()
 {
     /* Your code here */
     if(index!=NULL && index->type_check()!=integer_type) {
       type_error(index->pos) << " index must be integer type." << endl;
      }
-    return id->type_check();
+    return type = id->type_check();
 }
-
-
 
 /* This convenience function is used to type check all binary operations
    in which implicit casting of integer to real is done: plus, minus,
@@ -260,6 +261,7 @@ sym_index ast_divide::type_check()
     /* Your code here */
     sym_index ll = left->type_check();
     sym_index rr = right->type_check();
+
     if(ll == integer_type) {
         // how to cast
         left = new ast_cast(left->pos, left);
@@ -268,10 +270,8 @@ sym_index ast_divide::type_check()
       // how to cast
       right = new ast_cast(left->pos, right);
     }
-    return type = type_checker->check_binop1(this);
+    return type = real_type;
 }
-
-
 
 /* This convenience method is used to type check all binary operations
    which only accept integer operands: AND, OR, MOD, DIV.
@@ -320,23 +320,21 @@ sym_index ast_mod::type_check()
     return type =  type_checker->check_binop2(this, " MOD ");
 }
 
-
-
 /* Convienience method for all binary relations, since they're all typechecked
    the same way. They all return integer types, 1 = true, 0 = false. */
 sym_index semantic::check_binrel(ast_binaryrelation *node)
 {
     /* Your code here */
-
     sym_index ll = node->left->type_check();
     sym_index rr = node->right->type_check();
     if(ll != rr) {
       if(ll == integer_type) {
           // how to cast
-          node->right = new ast_cast(node->right->pos, node->right);
+          node->left = new ast_cast(node->left->pos, node->left);
       } else {
         // how to cast
-        node->left = new ast_cast(node->left->pos, node->left);
+        node->right = new ast_cast(node->right->pos, node->right);
+
       }
     }
 
@@ -367,8 +365,6 @@ sym_index ast_greaterthan::type_check()
   return type = type_checker->check_binrel(this);
 }
 
-
-
 /*** The various classes derived from ast_statement. ***/
 
 sym_index ast_procedurecall::type_check()
@@ -383,8 +379,11 @@ sym_index ast_procedurecall::type_check()
 sym_index ast_assign::type_check()
 {
     /* Your code here */
-    if(lhs->type_check() != rhs->type_check()) {
-      if(lhs->type_check()==real_type) {
+    sym_index ll = lhs->type_check();
+    sym_index rr = rhs->type_check();
+
+    if(ll != rr) {
+      if(ll==real_type) {
 
         // HOW CAN I CAST mmfmfmf
        rhs = new ast_cast(rhs->pos, rhs);
@@ -394,7 +393,7 @@ sym_index ast_assign::type_check()
       }
     }
 
-    return lhs->type_check();
+    return ll;
 }
 
 
@@ -421,6 +420,14 @@ sym_index ast_if::type_check()
 
     if(body !=NULL ) {
         body->type_check();
+    }
+
+    if(elsif_list !=NULL ) {
+        elsif_list->type_check();
+    }
+
+    if(else_body !=NULL ) {
+        else_body->type_check();
     }
 
     return void_type;
@@ -476,7 +483,7 @@ sym_index ast_functioncall::type_check()
     /* Your code here */
     type_checker->check_parameters(id, parameter_list);
 
-    return void_type;
+    return type;
 }
 
 sym_index ast_uminus::type_check()
@@ -486,7 +493,7 @@ sym_index ast_uminus::type_check()
       type_error(pos) << " invalid UMINUS : shoud be integer type" << endl;
     }
 
-    return integer_type;
+    return expr->type_check();
 }
 
 sym_index ast_not::type_check()
@@ -496,7 +503,7 @@ sym_index ast_not::type_check()
         type_error(pos) << " invalid NOT : shoud be integer type" << endl;
     }
 
-    return integer_type;
+    return expr->type_check();
 }
 
 
