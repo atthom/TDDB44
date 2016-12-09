@@ -25,6 +25,8 @@ class ast_optimizer
 
 public:
 
+    bool is_const(ast_expression*);
+
     // This is the interface to parser.y. Sending in a function body as
     // arguments performs (destructive) optimization on it.
     void do_optimize(ast_stmt_list *);
@@ -38,7 +40,7 @@ public:
     // a static method in the optimize.cc file... A matter of preference.
     ast_expression *fold_constants(ast_expression *);
 
-    void optimize_binop(ast_binaryoperation *node);
+    ast_expression* optimize_binop(ast_binaryoperation *node);
 };
 
 

@@ -39,26 +39,72 @@ bool ast_optimizer::is_binop(ast_expression *node)
     }
 }
 
-void ast_optimizer::optimize_binop(ast_binaryoperation *node) {
-//  ast_expression *left;
+bool ast_optimizer::is_const(ast_expression* expr) {
 
-//  ast_expression *right;
-
-/*
-  switch (node->tag) {
-  case AST_ADD:
-  case AST_SUB:
-  case AST_OR:
-  case AST_AND:
-  case AST_MULT:
-  case AST_DIVIDE:
-  case AST_IDIV:
-  case AST_MOD:
-
-}*/
-
-
+  if(expr->tag == AST_INTEGER || expr->tag == AST_REAL) {
+    return true;
+  }
+  return false;
 }
+
+ast_expression* ast_optimizer::optimize_binop(ast_binaryoperation *node) {
+
+  ast_expression *left = fold_constants(node->left);
+  ast_expression *right = fold_constants(node->right);
+
+  if(!(is_const(left) && is_const(right))) {
+    return node;
+  }
+
+  if(left->type==integer_type && right->type==integer_type) {
+    long ll = left->get_ast_integer()->value;
+    long rr = right->get_ast_integer()->value;
+
+    switch (node->tag) {
+      case AST_ADD:
+        return new ast_integer(node->pos, ll + rr);
+      case AST_SUB:
+        return new ast_integer(node->pos, ll - rr);
+      case AST_OR:
+        return new ast_integer(node->pos, ll || rr);
+      case AST_AND:
+        return new ast_integer(node->pos, ll && rr);
+      case AST_MULT:
+        return new ast_integer(node->pos, ll * rr);
+      case AST_IDIV:
+        return new ast_integer(node->pos, ll / rr);
+      case AST_DIVIDE:
+        return new ast_real(node->pos, ll / rr);
+      case AST_MOD:
+        return new ast_integer(node->pos, ll % rr);
+      default:
+      return node;
+    }
+
+  }  else if(left->type==real_type && right->type==real_type) {
+    double ll = left->get_ast_real()->value;
+    double rr = right->get_ast_real()->value;
+
+    switch (node->tag) {
+      case AST_ADD:
+        return new ast_real(node->pos, ll + rr);
+      case AST_SUB:
+        return new ast_real(node->pos, ll - rr);
+      case AST_OR:
+        return new ast_real(node->pos, ll || rr);
+      case AST_AND:
+        return new ast_real(node->pos, ll && rr);
+      case AST_MULT:
+        return new ast_real(node->pos, ll * rr);
+      case AST_DIVIDE:
+        return new ast_real(node->pos, ll / rr);
+      default:
+      return node;
+    }
+  }
+  return node;
+}
+
 
 
 /* We overload this method for the various ast_node subclasses that can
@@ -115,6 +161,12 @@ void ast_stmt_list::optimize()
 void ast_expr_list::optimize()
 {
     /* Your code here */
+    if(preceding!=NULL) {
+      preceding->optimize();
+    }
+    if(last_expr!=NULL) {
+      last_expr = optimizer->fold_constants(last_expr);
+    }
 }
 
 
@@ -122,6 +174,12 @@ void ast_expr_list::optimize()
 void ast_elsif_list::optimize()
 {
     /* Your code here */
+    if(preceding!=NULL) {
+      preceding->optimize();
+    }
+    if(last_elsif!=NULL) {
+      last_elsif->optimize();
+    }
 }
 
 
@@ -146,8 +204,13 @@ void ast_indexed::optimize()
 ast_expression *ast_optimizer::fold_constants(ast_expression *node)
 {
     /* Your code here */
+    node->optimize();
 
-    return NULL;
+    if(is_binop(node)) {
+        node = optimize_binop(node->get_ast_binaryoperation());
+    }
+
+    return node;
 }
 
 /* All the binary operations should already have been detected in their parent
