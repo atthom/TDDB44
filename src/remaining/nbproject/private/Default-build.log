@@ -1,0 +1,27 @@
+bison --defines --output-file=parser.cc parser.y
+parser.y:971.18: warning: empty rule for typed nonterminal, and no action [-Wother]
+                 |
+                  ^
+parser.y: warning: 43 shift/reduce conflicts [-Wconflicts-sr]
+parser.y: warning: 6 reduce/reduce conflicts [-Wconflicts-rr]
+flex scanner.l
+g++ -MM -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -pedantic symbol.cc symtab.cc ast.cc semantic.cc optimize.cc quads.cc codegen.cc error.cc main.cc > Makefile.dependencies
+g++ -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -pedantic -c symbol.cc
+g++ -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -pedantic -c symtab.cc
+g++ -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -pedantic -c ast.cc
+g++ -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -pedantic -c semantic.cc
+g++ -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -pedantic -c optimize.cc
+g++ -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -pedantic -c quads.cc
+g++ -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -pedantic -c codegen.cc
+codegen.cc: In member function ‘void code_generator::prologue(symbol*)’:
+codegen.cc:66:9: warning: variable ‘ar_size’ set but not used [-Wunused-but-set-variable]
+     int ar_size;
+         ^
+codegen.cc:69:23: warning: variable ‘last_arg’ set but not used [-Wunused-but-set-variable]
+     parameter_symbol *last_arg;
+                       ^
+g++ -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -pedantic -c error.cc
+g++ -std=c++11 -ggdb3 -Wall -Woverloaded-virtual -pedantic -c main.cc
+g++ -std=c++11 -g -Wall -Wno-unused-function -Wno-unused-variable -c parser.cc
+g++ -std=c++11 -g -Wall -Wno-unused-function -Wno-unused-variable -c scanner.cc
+g++ -o compiler symbol.o symtab.o ast.o semantic.o optimize.o quads.o codegen.o error.o main.o parser.o scanner.o 

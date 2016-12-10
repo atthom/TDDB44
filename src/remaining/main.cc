@@ -98,7 +98,7 @@ int main(int argc, char **argv)
             break;
         }
     }
-
+    
     if (optind > argc || optind < argc - 1) {
         usage(argv[0]);
     } else if (optind == argc) {

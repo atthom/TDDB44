@@ -11,7 +11,6 @@
      only involving constants, such as (assuming FOO = 2) 4 + FOO, replacing
      the + node with an integer node with the value 6. ***/
 
-
 class ast_optimizer;
 
 // Defined in optimize.cc.
