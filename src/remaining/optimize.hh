@@ -23,8 +23,9 @@ class ast_optimizer
    solving the optimization lab. */
 
 public:
+    bool faggot = false;
 
-    bool is_const(ast_expression*);
+    bool is_const(ast_expression*left, ast_expression* right);
 
     // This is the interface to parser.y. Sending in a function body as
     // arguments performs (destructive) optimization on it.

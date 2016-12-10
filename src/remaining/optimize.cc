@@ -38,22 +38,32 @@ bool ast_optimizer::is_binop(ast_expression *node)
   }
 }
 
-bool ast_optimizer::is_const(ast_expression *expr)
+bool ast_optimizer::is_const(ast_expression *left,ast_expression *right )
 {
 
-  if (expr->tag == AST_INTEGER || expr->tag == AST_REAL)
+  if (left->tag == AST_INTEGER || left->tag == AST_REAL )
   {
-    return true;
+    if( right->tag == AST_INTEGER || right->tag == AST_REAL) {
+       return true;
+    } else {
+      return false;
+    }
   }
 
-
-  if (expr->tag == AST_ID)
+  if (left->tag == AST_ID && (right->tag == AST_INTEGER || right->tag == AST_REAL))
   {
-    sym_index ll = expr->get_ast_id()->sym_p;
+    sym_index ll = left->get_ast_id()->sym_p;
     symbol* sym_left = sym_tab->get_symbol(ll);
-  //  if(sym_left->tag ==SYM_CONST) {
-  //    return true;
-   // } 
+    if(sym_left->tag ==SYM_CONST) {
+      return true;
+    }
+/*
+    if(sym_left->tag ==SYM_CONST) {
+      faggot = true;
+      return true;
+    } else {
+      return false;
+    }*/
   }
 
   return false;
@@ -64,53 +74,50 @@ ast_expression *ast_optimizer::optimize_binop(ast_binaryoperation *node)
 
   ast_expression *left = fold_constants(node->left);
   ast_expression *right = fold_constants(node->right);
-/*
-  if(node->tag==AST_ADD) {
-    if(!(is_const(left) && is_const(right))) {
-      cout << "left\n" << left << endl;
-      cout << "type\n" << left->type << endl;
-      sym_index ll = left->get_ast_id()->sym_p;
-      symbol* sym_left = sym_tab->get_symbol(ll);
 
-      cout << sym_left << endl;
-    }
-   // cout << node << endl;
-  }*/
 
-  if(!(is_const(left) && is_const(right))) {
+  if(!is_const(left, right)) {
     return node;
   }
   
   if (left->type == integer_type && right->type == integer_type)
   {
-    long ll = left->get_ast_integer()->value;
+    long ll;
+    if(left->tag == AST_ID) {
+        sym_index ind = left->get_ast_id()->sym_p;
+        constant_symbol* sym_left = sym_tab->get_symbol(ind)->get_constant_symbol();
+        ll = sym_left->const_value.ival;
+        cout << "left" << ll;
+    } else {
+      ll = left->get_ast_integer()->value;
+    }
     long rr = right->get_ast_integer()->value;
 
     switch (node->tag)
     {
     case AST_ADD:
-      left = new ast_integer(node->pos, ll + rr);
+      right = new ast_integer(node->pos, ll + rr);
       break;
     case AST_SUB:
-      left = new ast_integer(node->pos, ll - rr);
+      right = new ast_integer(node->pos, ll - rr);
       break;
     case AST_OR:
-      left = new ast_integer(node->pos, ll || rr);
+      right = new ast_integer(node->pos, ll || rr);
       break;
     case AST_AND:
-      left = new ast_integer(node->pos, ll && rr);
+      right = new ast_integer(node->pos, ll && rr);
       break;
     case AST_MULT:
-      left = new ast_integer(node->pos, ll * rr);
+      right = new ast_integer(node->pos, ll * rr);
       break;
     case AST_IDIV:
-      left = new ast_integer(node->pos, ll / rr);
+      right = new ast_integer(node->pos, ll / rr);
       break;
     case AST_DIVIDE:
-      left = new ast_real(node->pos, ll / rr);
+      right = new ast_real(node->pos, ll / rr);
       break;
     case AST_MOD:
-      left = new ast_integer(node->pos, ll % rr);
+      right = new ast_integer(node->pos, ll % rr);
       break;
     default:
       return node;
@@ -118,35 +125,44 @@ ast_expression *ast_optimizer::optimize_binop(ast_binaryoperation *node)
   }
   else if (left->type == real_type && right->type == real_type)
   {
-    double ll = left->get_ast_real()->value;
+    double ll;
+
+    if(left->tag == AST_ID) {
+        sym_index ll = left->get_ast_id()->sym_p;
+        constant_symbol* sym_left = sym_tab->get_symbol(ll)->get_constant_symbol();
+        ll = sym_left->const_value.rval;
+    } else {
+      ll = left->get_ast_real()->value;
+    }
+
     double rr = right->get_ast_real()->value;
 
     switch (node->tag)
     {
     case AST_ADD:
-      left = new ast_real(node->pos, ll + rr);
+      right = new ast_real(node->pos, ll + rr);
       break;
     case AST_SUB:
-      left = new ast_real(node->pos, ll - rr);
+      right = new ast_real(node->pos, ll - rr);
       break;
     case AST_OR:
-      left = new ast_real(node->pos, ll || rr);
+      right = new ast_real(node->pos, ll || rr);
       break;
     case AST_AND:
-      left = new ast_real(node->pos, ll && rr);
+      right = new ast_real(node->pos, ll && rr);
       break;
     case AST_MULT:
-      left = new ast_real(node->pos, ll * rr);
+      right = new ast_real(node->pos, ll * rr);
       break;
     case AST_DIVIDE:
-      left = new ast_real(node->pos, ll / rr);
+      right = new ast_real(node->pos, ll / rr);
       break;
     default:
       return node;
     }
   }
 
-  return left;
+  return right;
 }
 
 /* We overload this method for the various ast_node subclasses that can
