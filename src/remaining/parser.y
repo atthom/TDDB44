@@ -241,11 +241,9 @@ const_decl      : T_IDENT T_EQ integer T_SEMICOLON
                     if (third->type == real_type) {
 
                       sym_tab->enter_constant(pos,$1, third->type, third->const_value.rval);
-
                     } else if(third->type == integer_type) {
-
+                        
                       sym_tab->enter_constant(pos,$1, third->type, third->const_value.ival);
-
                     }
 
 

@@ -146,6 +146,12 @@ sym_index ast_integer::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
+
+    sym_index tmp = sym_tab->gen_temp_var(integer_type);
+
+    q+= new quadruple(q_iload, value, 0, tmp);
+
+
     return NULL_SYM;
 }
 
@@ -154,7 +160,12 @@ sym_index ast_real::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+
+    sym_index tmp = sym_tab->gen_temp_var(real_type);
+
+    q+= new quadruple(q_rload, value, 0, tmp);
+
+    return tmp;
 }
 
 
@@ -165,11 +176,20 @@ sym_index ast_real::generate_quads(quad_list &q)
    written a static do_unary function above to handle them. To be able to
    do so, we'd have to pass on more arguments than we are to the two
    do_binary* functions above. Why? */
+ //  static do_unary()
 
 sym_index ast_not::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
+
+
+    sym_index quad_expr = expr->generate_quads(q);
+    
+    sym_index tmp = sym_tab->gen_temp_var(integer_type);
+
+    q+= new quadruple(q_inot, quad_expr, 0, tmp);
+
     return NULL_SYM;
 }
 
