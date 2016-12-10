@@ -57,13 +57,6 @@ bool ast_optimizer::is_const(ast_expression *left,ast_expression *right )
     if(sym_left->tag ==SYM_CONST) {
       return true;
     }
-/*
-    if(sym_left->tag ==SYM_CONST) {
-      faggot = true;
-      return true;
-    } else {
-      return false;
-    }*/
   }
 
   return false;
@@ -74,7 +67,6 @@ ast_expression *ast_optimizer::optimize_binop(ast_binaryoperation *node)
 
   ast_expression *left = fold_constants(node->left);
   ast_expression *right = fold_constants(node->right);
-
 
   if(!is_const(left, right)) {
     return node;
@@ -87,7 +79,6 @@ ast_expression *ast_optimizer::optimize_binop(ast_binaryoperation *node)
         sym_index ind = left->get_ast_id()->sym_p;
         constant_symbol* sym_left = sym_tab->get_symbol(ind)->get_constant_symbol();
         ll = sym_left->const_value.ival;
-        cout << "left" << ll;
     } else {
       ll = left->get_ast_integer()->value;
     }

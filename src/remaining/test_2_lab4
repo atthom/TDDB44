@@ -1,10 +1,1 @@
-diesel -b -p -f -y -a ../testpgm/semtest2.d		      |	Generating assembler for procedure "INDEX"
-							      >	Type conflict, line 17, col 1: A function must return a value
-							      >	Type conflict, line 25, col 6: Can't assign a real value to a
-							      >	Type conflict, line 27, col 11: Type discrepancy between form
-							      >	Type conflict, line 28, col 7: Can't assign a real value to a
-							      >	Type conflict, line 30, col 1: Procedures may not return a va
-							      >	Type conflict, line 34, col 7: More actual than formal parame
-							      >	Type conflict, line 35, col 1: More formal than actual parame
-							      >	Type conflict, line 36, col 7: Type discrepancy between forma
-							      >	Found 8 errors. Compilation aborted.
+diesel -b -p -f -y -a ../testpgm/semtest2.d	| diff - ../trace/semtest2.trace
