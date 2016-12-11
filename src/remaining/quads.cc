@@ -177,12 +177,13 @@ sym_index ast_not::generate_quads(quad_list &q)
     USE_Q;
     /* Your code here */
 
-/*
+    /*
     sym_index quad_expr = expr->generate_quads(q);
     sym_index tmp = sym_tab->gen_temp_var(integer_type);
     q += new quadruple(q_inot, quad_expr, 0, tmp);
 */
-    return do_unary(q_inot,integer_type,expr, q);;
+    return do_unary(q_inot, integer_type, expr, q);
+    ;
 }
 
 sym_index ast_uminus::generate_quads(quad_list &q)
@@ -194,11 +195,11 @@ sym_index ast_uminus::generate_quads(quad_list &q)
 
     if (expr->type == integer_type)
     {
-       tmp =  do_unary(q_iminus,integer_type,expr, q);
+        tmp = do_unary(q_iminus, integer_type, expr, q);
     }
     else
     {
-        tmp =  do_unary(q_rminus,real_type,expr, q);
+        tmp = do_unary(q_rminus, real_type, expr, q);
     }
 
     return tmp;
@@ -208,106 +209,246 @@ sym_index ast_cast::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    
-    return do_unary(q_itor,integer_type,expr, q);
-}
 
+    return do_unary(q_itor, integer_type, expr, q);
+}
 
 /*
 placeholder function for AST with 2 operands
 
 */
+static sym_index do_secondary(quad_op_type op_code, sym_index type, ast_expression* left, ast_expression* right, quad_list &q)
+{
+    if (left->type != right->type)
+    {
+        fatal("Left and Right operand have different type");
+        return NULL_SYM;
+    }
 
+    sym_index quad_left = left->generate_quads(q);
+    sym_index quad_right = right->generate_quads(q);
+
+    sym_index tmp = sym_tab->gen_temp_var(type);
+
+    q += new quadruple(op_code, quad_left, quad_right, tmp);
+
+    return tmp;
+}
 
 sym_index ast_add::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-/*
-    sym_index quad_expr = expr->generate_quads(q);
+    if (left->type != right->type)
+    {
+        fatal("Left and Right operand have different type");
+        return NULL_SYM;
+    }
+
+    sym_index quad_left = left->generate_quads(q);
+    sym_index quad_right = right->generate_quads(q);
 
     sym_index tmp = sym_tab->gen_temp_var(type);
 
-    q += new quadruple(op_code, quad_expr, 0, tmp);*/
+    if (left->type == integer_type)
+    {
+        q += new quadruple(q_iplus, quad_left, quad_right, tmp);
+    }
+    else
+    {
+        q += new quadruple(q_rplus, quad_left, quad_right, tmp);
+    }
 
-    return NULL_SYM;
+    return tmp;
 }
 
 sym_index ast_sub::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+    
+    sym_index tmp;
+
+    if (left->type == integer_type)
+    {
+        tmp = do_secondary(q_iminus, type, left, right, q);
+    }
+    else
+    {
+        tmp = do_secondary(q_iminus, type,  left, right, q);
+    }
+
+    return tmp;
 }
 
 sym_index ast_mult::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+    sym_index tmp;
+
+    if (left->type == integer_type)
+    {
+        tmp = do_secondary(q_imult, type, left, right, q);
+    }
+    else
+    {
+        tmp = do_secondary(q_rmult, type,  left, right, q);
+    }
+
+    return tmp;
 }
 
 sym_index ast_divide::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+    sym_index tmp;
+
+    if (left->type == integer_type)
+    {
+        tmp = do_secondary(q_idivide, type, left, right, q);
+    }
+    else
+    {
+        tmp = do_secondary(q_rdivide, type,  left, right, q);
+    }
+
+    return tmp;
 }
 
 sym_index ast_idiv::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+    return do_secondary(q_idivide, type, left, right, q);
 }
 
 sym_index ast_mod::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+     sym_index tmp;
+
+    if (left->type == integer_type)
+    {
+        tmp = do_secondary(q_idivide, type, left, right, q);
+    }
+    else
+    {
+        tmp = do_secondary(q_rdivide, type,  left, right, q);
+    }
+
+    return tmp;
 }
 
 sym_index ast_or::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+     sym_index tmp;
+
+    if (left->type == integer_type)
+    {
+        tmp = do_secondary(q_idivide, type, left, right, q);
+    }
+    else
+    {
+        tmp = do_secondary(q_rdivide, type,  left, right, q);
+    }
+
+    return tmp;
 }
 
 sym_index ast_and::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+     sym_index tmp;
+
+    if (left->type == integer_type)
+    {
+        tmp = do_secondary(q_idivide, type, left, right, q);
+    }
+    else
+    {
+        tmp = do_secondary(q_rdivide, type,  left, right, q);
+    }
+
+    return tmp;
 }
+
 
 sym_index ast_equal::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+     sym_index tmp;
+
+    if (left->type == integer_type)
+    {
+        tmp = do_secondary(q_idivide, type, left, right, q);
+    }
+    else
+    {
+        tmp = do_secondary(q_rdivide, type,  left, right, q);
+    }
+
+    return tmp;
 }
 
 sym_index ast_notequal::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+     sym_index tmp;
+
+    if (left->type == integer_type)
+    {
+        tmp = do_secondary(q_idivide, type, left, right, q);
+    }
+    else
+    {
+        tmp = do_secondary(q_rdivide, type,  left, right, q);
+    }
+
+    return tmp;
 }
 
 sym_index ast_lessthan::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+     sym_index tmp;
+
+    if (left->type == integer_type)
+    {
+        tmp = do_secondary(q_idivide, type, left, right, q);
+    }
+    else
+    {
+        tmp = do_secondary(q_rdivide, type,  left, right, q);
+    }
+
+    return tmp;
 }
 
 sym_index ast_greaterthan::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+     sym_index tmp;
+
+    if (left->type == integer_type)
+    {
+        tmp = do_secondary(q_idivide, type, left, right, q);
+    }
+    else
+    {
+        tmp = do_secondary(q_rdivide, type,  left, right, q);
+    }
+
+    return tmp;
 }
 
 /* Since an lvalue can be either an id or an array reference, we can't solve
