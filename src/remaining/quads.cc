@@ -217,7 +217,7 @@ sym_index ast_cast::generate_quads(quad_list &q)
 placeholder function for AST with 2 operands
 
 */
-static sym_index do_secondary(quad_op_type op_code, sym_index type, ast_expression* left, ast_expression* right, quad_list &q)
+static sym_index do_secondary(quad_op_type op_code, sym_index type, ast_expression *left, ast_expression *right, quad_list &q)
 {
     if (left->type != right->type)
     {
@@ -266,7 +266,7 @@ sym_index ast_sub::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    
+
     sym_index tmp;
 
     if (left->type == integer_type)
@@ -275,7 +275,7 @@ sym_index ast_sub::generate_quads(quad_list &q)
     }
     else
     {
-        tmp = do_secondary(q_iminus, type,  left, right, q);
+        tmp = do_secondary(q_iminus, type, left, right, q);
     }
 
     return tmp;
@@ -293,7 +293,7 @@ sym_index ast_mult::generate_quads(quad_list &q)
     }
     else
     {
-        tmp = do_secondary(q_rmult, type,  left, right, q);
+        tmp = do_secondary(q_rmult, type, left, right, q);
     }
 
     return tmp;
@@ -311,7 +311,7 @@ sym_index ast_divide::generate_quads(quad_list &q)
     }
     else
     {
-        tmp = do_secondary(q_rdivide, type,  left, right, q);
+        tmp = do_secondary(q_rdivide, type, left, right, q);
     }
 
     return tmp;
@@ -328,70 +328,39 @@ sym_index ast_mod::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-     sym_index tmp;
 
-    if (left->type == integer_type)
-    {
-        tmp = do_secondary(q_idivide, type, left, right, q);
-    }
-    else
-    {
-        tmp = do_secondary(q_rdivide, type,  left, right, q);
-    }
-
-    return tmp;
+    return do_secondary(q_imod, type, left, right, q);
 }
 
 sym_index ast_or::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-     sym_index tmp;
 
-    if (left->type == integer_type)
-    {
-        tmp = do_secondary(q_idivide, type, left, right, q);
-    }
-    else
-    {
-        tmp = do_secondary(q_rdivide, type,  left, right, q);
-    }
-
-    return tmp;
+    return do_secondary(q_ior, type, left, right, q);
 }
 
 sym_index ast_and::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-     sym_index tmp;
 
-    if (left->type == integer_type)
-    {
-        tmp = do_secondary(q_idivide, type, left, right, q);
-    }
-    else
-    {
-        tmp = do_secondary(q_rdivide, type,  left, right, q);
-    }
-
-    return tmp;
+    return do_secondary(q_iand, type, left, right, q);
 }
-
 
 sym_index ast_equal::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-     sym_index tmp;
+    sym_index tmp;
 
     if (left->type == integer_type)
     {
-        tmp = do_secondary(q_idivide, type, left, right, q);
+        tmp = do_secondary(q_ieq, type, left, right, q);
     }
     else
     {
-        tmp = do_secondary(q_rdivide, type,  left, right, q);
+        tmp = do_secondary(q_req, type, left, right, q);
     }
 
     return tmp;
@@ -401,15 +370,15 @@ sym_index ast_notequal::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-     sym_index tmp;
+    sym_index tmp;
 
     if (left->type == integer_type)
     {
-        tmp = do_secondary(q_idivide, type, left, right, q);
+        tmp = do_secondary(q_ine, type, left, right, q);
     }
     else
     {
-        tmp = do_secondary(q_rdivide, type,  left, right, q);
+        tmp = do_secondary(q_rne, type, left, right, q);
     }
 
     return tmp;
@@ -419,15 +388,15 @@ sym_index ast_lessthan::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-     sym_index tmp;
+    sym_index tmp;
 
     if (left->type == integer_type)
     {
-        tmp = do_secondary(q_idivide, type, left, right, q);
+        tmp = do_secondary(q_ilt, type, left, right, q);
     }
     else
     {
-        tmp = do_secondary(q_rdivide, type,  left, right, q);
+        tmp = do_secondary(q_rlt, type, left, right, q);
     }
 
     return tmp;
@@ -437,15 +406,15 @@ sym_index ast_greaterthan::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-     sym_index tmp;
+    sym_index tmp;
 
     if (left->type == integer_type)
     {
-        tmp = do_secondary(q_idivide, type, left, right, q);
+        tmp = do_secondary(q_igt, type, left, right, q);
     }
     else
     {
-        tmp = do_secondary(q_rdivide, type,  left, right, q);
+        tmp = do_secondary(q_rgt, type, left, right, q);
     }
 
     return tmp;
@@ -513,6 +482,18 @@ void ast_expr_list::generate_parameter_list(quad_list &q,
 {
     USE_Q;
     /* Your code here */
+
+    if (last_param != NULL)
+    {
+        sym_index param = last_expr->generate_quads(q);
+        q += new quadruple(q_param, param, 0, 0);
+    }
+
+    if (preceding != NULL)
+    {
+        (*nr_params)++;
+        generate_parameter_list(q, last_param->preceding, nr_params);
+    }
 }
 
 /* Generate quads for a procedure call. */
@@ -520,7 +501,19 @@ sym_index ast_procedurecall::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+    int nb_params = 0;
+
+    if (parameter_list != NULL)
+    {
+        symbol *symbol = sym_tab->get_symbol(id->sym_p);
+        procedure_symbol *proc_symbol = symbol->get_procedure_symbol();
+        parameter_symbol *list_param = proc_symbol->last_parameter;
+        parameter_list->generate_parameter_list(q, list_param, &nb_params);
+    }
+
+    q += new quadruple(q_call, id->sym_p, nb_params, 0);
+
+    return id->sym_p;
 }
 
 /* Generate quads for a function call. */
@@ -528,7 +521,20 @@ sym_index ast_functioncall::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+    int nb_params = 0;
+    sym_index sym_return = sym_tab->gen_temp_var(type);
+
+    if (parameter_list != NULL)
+    {
+        symbol *symbol = sym_tab->get_symbol(id->sym_p);
+        function_symbol *func_symbol = symbol->get_function_symbol();
+        parameter_symbol *list_param = func_symbol->last_parameter;
+        parameter_list->generate_parameter_list(q, list_param, &nb_params);
+    }
+
+    q += new quadruple(q_call, id->sym_p, nb_params, sym_return);
+
+    return id->sym_p;
 }
 
 /* Generate quads for a while statement.
@@ -566,6 +572,26 @@ void ast_elsif::generate_quads_and_jump(quad_list &q, int label)
 {
     USE_Q;
     /* Your code here */
+    /*
+        ast_expression *condition;.
+    ast_stmt_list *body;
+    */
+    long ss = sym_tab->get_next_label();
+
+    if (condition != NULL)
+    {
+        sym_index sym_cond = condition->generate_quads(q);
+        q += new quadruple(q_jmpf, ss, sym_cond, 0);
+    }
+
+    if (body != NULL)
+    {
+        body->generate_quads(q);
+    }
+
+    q += new quadruple(q_jmp, label, 0, 0);
+
+    q += new quadruple(q_labl, ss, 0, 0);
 }
 
 /* Generate quads (with an ending jump to an end label) for an elsif list.
@@ -574,6 +600,21 @@ void ast_elsif_list::generate_quads_and_jump(quad_list &q, int label)
 {
     USE_Q;
     /* Your code here */
+    /*
+        ast_elsif *last_elsif;
+
+    // Points to a list of the preceding elsif clauses.
+    ast_elsif_list *preceding;
+*/
+    if (last_elsif != NULL)
+    {
+        last_elsif->generate_quads_and_jump(q, label);
+    }
+
+    if (preceding != NULL)
+    {
+        preceding->generate_quads_and_jump(q, label);
+    }
 }
 
 /* Generate quads for an if statement. */
@@ -581,6 +622,54 @@ sym_index ast_if::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
+    // The primary if condition.
+    /*
+    ast_expression *condition;
+
+    // The primary if body, executed if 'condition' evaluates to non-zero.
+    ast_stmt_list *body;
+
+    // A list of elsif clauses. Can be NULL.
+    ast_elsif_list *elsif_list;
+
+    // The else body, executed if 'condition' evaluates to zero. Can be NULL.
+    ast_stmt_list *else_body;
+    */
+
+    sym_index first = condition->generate_quads(q);
+
+    long label_cond = sym_tab->get_next_label();
+
+    // remove the if, put jump on labels instead
+    q += new quadruple(q_jmpf, label_cond, first, 0);
+
+    body->generate_quads(q);
+
+    long label_afterblock = sym_tab->get_next_label();
+
+    if (elsif_list != NULL || else_body != NULL)
+    {
+        // jump to the next else/elsif
+        q += new quadruple(q_jmp, label_afterblock, 0, 0);
+    }
+
+    //put a label to the next else/elsif
+    q += new quadruple(q_labl, label_cond, 0, 0);
+
+    // generate quad for the rest of the block
+    if (elsif_list != NULL)
+    {
+        elsif_list->generate_quads_and_jump(q, label_afterblock);
+    }
+
+    if (else_body != NULL)
+    {
+        else_body->generate_quads(q);
+    }
+
+    // put the last label of the if
+    q += new quadruple(q_labl, label_afterblock, 0, 0);
+
     return NULL_SYM;
 }
 
@@ -589,7 +678,24 @@ sym_index ast_return::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+    sym_index quad_value;
+    if (value != NULL)
+    {
+        quad_value = value->generate_quads(q);
+    } else {
+        return NULL_SYM;
+    }
+
+    if (value->type == integer_type)
+    {
+        q += new quadruple(q_rreturn, q.last_label,quad_value,0);
+    }
+    else
+    {
+        q += new quadruple(q_ireturn,q.last_label , quad_value, 0);
+    }
+
+    return quad_value;
 }
 
 /* Generate quads for an array reference. */
@@ -597,7 +703,19 @@ sym_index ast_indexed::generate_quads(quad_list &q)
 {
     USE_Q;
     /* Your code here */
-    return NULL_SYM;
+    sym_index ind = index->generate_quads(q);
+    sym_index result = sym_tab->gen_temp_var(type);
+
+    if (type == integer_type)
+    {
+        q += new quadruple(q_lindex, id->sym_p, ind, result);
+    }
+    else
+    {
+        q += new quadruple(q_rrindex, id->sym_p, ind, result);
+    }
+
+    return result;
 }
 
 /* Generate quads for a list of statements. Note that this is not necessarily
