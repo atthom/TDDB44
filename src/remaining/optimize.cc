@@ -71,7 +71,7 @@ ast_expression *ast_optimizer::optimize_binop(ast_binaryoperation *node)
   if(!is_const(left, right)) {
     return node;
   }
-  
+
   if (left->type == integer_type && right->type == integer_type)
   {
     long ll;
@@ -344,7 +344,7 @@ void ast_notequal::optimize()
   /* Your code here */
   left = optimizer->fold_constants(left);
   right = optimizer->fold_constants(right);
-  
+
 }
 
 void ast_lessthan::optimize()
@@ -459,7 +459,11 @@ void ast_elsif::optimize()
   {
     condition = optimizer->fold_constants(condition);
   }
-  body->optimize();
+  if (body != NULL)
+  {
+      body->optimize();
+  }
+
 }
 
 void ast_integer::optimize()

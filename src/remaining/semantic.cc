@@ -80,10 +80,11 @@ void semantic::check_parameters(ast_id *call_id,
 {
     /* Your code here */
     symbol * symbol_called = sym_tab->get_symbol(call_id->sym_p);
-
+/*
     if(param_list!= NULL) {
       param_list->type_check();
     }
+    */
     parameter_symbol* list_from_symtab;
 
     if(symbol_called->tag==SYM_FUNC) {
@@ -98,7 +99,6 @@ void semantic::check_parameters(ast_id *call_id,
     }
 
     chk_param(call_id, list_from_symtab, param_list);
-
 }
 
 
@@ -122,6 +122,7 @@ sym_index ast_statement::type_check()
 sym_index ast_expression::type_check()
 {
     type_error(pos);
+    cout << " efgokwepigjwepifj";
     fatal("Trying to type check abstract class ast_expression.");
     return void_type;
 }
@@ -212,40 +213,52 @@ sym_index ast_indexed::type_check()
 sym_index semantic::check_binop1(ast_binaryoperation *node)
 {
     /* Your code here */
+    sym_index ll;
+    sym_index rr;
 
-    sym_index ll = node->left->type_check();
-    sym_index rr = node->right->type_check();
+    ll = node->left->type_check();
+    rr = node->right->type_check();
 
+/*
     if (ll==rr && (ll==integer_type || ll==real_type) ) {
-      /* code */
       return ll;
-    }
+    }*/
 
     if(ll == integer_type && rr == real_type) {
         node->left = new ast_cast(node->left->pos,node->left);
+        node->left->type = real_type;
+        //node->right = new ast_cast(node->right->pos, node->right);
         return real_type;
     }
 
     if(ll == real_type && rr == integer_type) {
         node->right = new ast_cast(node->right->pos, node->right);
+        node->right->type = real_type;
+      //  node->left = new ast_cast(node->left->pos,node->left);
         return real_type;
     }
 
-    type_error(node->pos) << " Unknown type operation";
-    return void_type; // You don't have to use this method but it might be convenient
+    if(ll == real_type && rr == real_type) {
+        node->right->type = real_type;
+        node->left->type = real_type;
+    } else {
+      node->right->type = integer_type;
+      node->left->type = integer_type;
+    }
+
+    return node->left->type; // You don't have to use this method but it might be convenient
 }
 
 sym_index ast_add::type_check()
 {
     /* Your code here */
-
    return type = type_checker->check_binop1(this);
 }
 
 sym_index ast_sub::type_check()
 {
     /* Your code here */
-    return type =  type_checker->check_binop1(this);
+    return type = type_checker->check_binop1(this);
 }
 
 sym_index ast_mult::type_check()
@@ -265,10 +278,12 @@ sym_index ast_divide::type_check()
     if(ll == integer_type) {
         // how to cast
         left = new ast_cast(left->pos, left);
+        left->type = real_type;
     }
     if(rr == integer_type)  {
       // how to cast
       right = new ast_cast(left->pos, right);
+      right->type = real_type;
     }
     return type = real_type;
 }
@@ -305,7 +320,7 @@ sym_index ast_or::type_check()
 sym_index ast_and::type_check()
 {
     /* Your code here */
-    return type =  type_checker->check_binop2(this, " AND ");
+    return type = type_checker->check_binop2(this, " AND ");
 }
 
 sym_index ast_idiv::type_check()
@@ -331,10 +346,11 @@ sym_index semantic::check_binrel(ast_binaryrelation *node)
       if(ll == integer_type) {
           // how to cast
           node->left = new ast_cast(node->left->pos, node->left);
+          node->left->type = real_type;
       } else {
         // how to cast
         node->right = new ast_cast(node->right->pos, node->right);
-
+        node->right->type = real_type;
       }
     }
 
@@ -350,7 +366,8 @@ sym_index ast_equal::type_check()
 sym_index ast_notequal::type_check()
 {
     /* Your code here */
-    return type = type_checker->check_binrel(this);
+    //type = type_checker->check_binrel(this);
+    return type = integer_type;
 }
 
 sym_index ast_lessthan::type_check()
@@ -384,12 +401,11 @@ sym_index ast_assign::type_check()
 
     if(ll != rr) {
       if(ll==real_type) {
-
         // HOW CAN I CAST mmfmfmf
        rhs = new ast_cast(rhs->pos, rhs);
        // maybe ?
       } else {
-          type_error(pos) << " can't cast real into integer." << endl;
+          type_error(rhs->pos) << " can't cast real into integer." << endl;
       }
     }
 
@@ -510,7 +526,7 @@ sym_index ast_not::type_check()
 sym_index ast_elsif::type_check()
 {
     /* Your code here */
-    if(condition !=NULL && condition->type_check()!=integer_type) {
+    if(condition != NULL && condition->type_check()!=integer_type) {
         type_error(pos) << " invalid condition elsif : shoud be integer type" << endl;
     }
 

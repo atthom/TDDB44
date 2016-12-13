@@ -34,6 +34,7 @@ public:
     sym_index check_binop2(ast_binaryoperation *, string);
 
     sym_index check_binrel(ast_binaryrelation *);
+
 };
 
 #endif

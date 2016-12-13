@@ -221,6 +221,10 @@ static sym_index do_secondary(quad_op_type op_code, sym_index type, ast_expressi
 {
     if (left->type != right->type)
     {
+        cout << "poos" << left->pos;
+        cout << "left" << left;
+        cout << "poos" << right->pos;
+        cout << "right" << right << endl;
         fatal("Left and Right operand have different type");
         return NULL_SYM;
     }

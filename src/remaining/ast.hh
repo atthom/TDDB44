@@ -671,8 +671,6 @@ public:
     virtual sym_index generate_quads(quad_list &);
 };
 
-
-
 /* A return statement, used both for procedures and functions.
    If no value is returned, 'value' should be set to NULL. */
 class ast_return : public ast_statement
