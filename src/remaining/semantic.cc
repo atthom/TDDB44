@@ -122,7 +122,7 @@ sym_index ast_statement::type_check()
 sym_index ast_expression::type_check()
 {
     type_error(pos);
-    cout << " efgokwepigjwepifj";
+    cout << this << endl;
     fatal("Trying to type check abstract class ast_expression.");
     return void_type;
 }
@@ -239,15 +239,10 @@ sym_index semantic::check_binop1(ast_binaryoperation *node)
     }
 
     if(ll == real_type && rr == real_type) {
-        node->right->type = real_type;
-        node->left->type = real_type;
         node->type = real_type;
     } else {
-      node->right->type = integer_type;
-      node->left->type = integer_type;
       node->type = integer_type;
     }
-
 
     return node->left->type; // You don't have to use this method but it might be convenient
 }
@@ -370,6 +365,7 @@ sym_index ast_notequal::type_check()
 {
     /* Your code here */
     //type = type_checker->check_binrel(this);
+
     return type = type_checker->check_binrel(this);
 }
 
@@ -523,7 +519,7 @@ sym_index ast_not::type_check()
         type_error(pos) << " invalid NOT : shoud be integer type" << endl;
     }
 
-    return expr->type_check();
+    return integer_type;
 }
 
 
