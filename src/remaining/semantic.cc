@@ -241,10 +241,13 @@ sym_index semantic::check_binop1(ast_binaryoperation *node)
     if(ll == real_type && rr == real_type) {
         node->right->type = real_type;
         node->left->type = real_type;
+        node->type = real_type;
     } else {
       node->right->type = integer_type;
       node->left->type = integer_type;
+      node->type = integer_type;
     }
+
 
     return node->left->type; // You don't have to use this method but it might be convenient
 }
@@ -367,7 +370,7 @@ sym_index ast_notequal::type_check()
 {
     /* Your code here */
     //type = type_checker->check_binrel(this);
-    return type = integer_type;
+    return type = type_checker->check_binrel(this);
 }
 
 sym_index ast_lessthan::type_check()
@@ -403,6 +406,7 @@ sym_index ast_assign::type_check()
       if(ll==real_type) {
         // HOW CAN I CAST mmfmfmf
        rhs = new ast_cast(rhs->pos, rhs);
+       rhs->type = real_type;
        // maybe ?
       } else {
           type_error(rhs->pos) << " can't cast real into integer." << endl;
