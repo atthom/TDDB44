@@ -1,0 +1,1 @@
+diesel -a -b -c -f -p ../testpgm/parstest2.d | diff - ../trace/parstest2.trace
