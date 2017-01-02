@@ -1,1 +1,1 @@
-diesel -b -q -y -s ../testpgm/quadtest1.d	| diff - ../trace/quadtest1.trace
+diesel -b -q -y ../testpgm/quadtest1.d	| diff - ../trace/quadtest1.trace

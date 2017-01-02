@@ -55,6 +55,8 @@
         </gdb_signals>
         <gdb_options>
           <DebugOptions>
+            <option name="debug_command"
+                    value="&quot;${OUTPUT_PATH}&quot; -q -y -s ../testpgm/quadtest1.d"/>
             <option name="debug_dir" value="/home/thoja896/TDDB44/src/remaining/."/>
           </DebugOptions>
         </gdb_options>
@@ -66,8 +68,11 @@
       <runprofile version="9">
         <runcommandpicklist>
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -a -s -q  gege.d</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -q -y -s ../testpgm/quadtest1.d</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -q -y -s ../testpgm/quadtest1.d</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}"</runcommand>
+        <runcommand>"${OUTPUT_PATH}"  -q -y -s ../testpgm/quadtest1.d</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

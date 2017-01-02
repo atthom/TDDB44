@@ -171,7 +171,7 @@ long symbol_table::get_next_label()
 sym_index symbol_table::gen_temp_var(sym_index type)
 {
     /* Your code here */
-    static int nb_var = 0;
+    static int nb_var = 1;
     string tmp;
 
     if (type == void_type)
@@ -179,7 +179,7 @@ sym_index symbol_table::gen_temp_var(sym_index type)
         fatal("Temporary variable can't be created : void type");
     }
 
-    tmp = "$" + nb_var;
+    tmp = "$" + to_string(nb_var);
 
     pool_index pool_tmp = pool_install((char*)tmp.c_str());
 
