@@ -99,7 +99,34 @@ void code_generator::prologue(symbol *new_env)
     }
 
     /* Your code here */
+    // move params in the stack
+    // push in stack
+    /*
+L3:			# MAIN
+		push	rbp
+		mov	rcx, rsp
+		push	rcx
+		mov	rbp, rcx
+		sub	rsp, 8
+		mov	rax, 23
+L4:			# WRITE_INT
+		push	rbp
+		mov	rcx, rsp
+		push	[rbp-8]
+		push	rcx
+		mov	rbp, rcx
+		sub	rsp, 264
+		mov	rax, 0
+    */
+    out << "\t\t" << "push" << "\t" << "rbp" << endl;
+    out << "\t\t" << "mov" << "\t" << "rcx," << "\t" << "rsp" << "\t" << endl;
+    // truc a faire ici
+    out << "\t\t" << "push" << "\t" << "rcx" << endl;
+    out << "\t\t" << "mov" << "\t" << "rbp," << "\t" << "rcx" << "\t" <<  endl;
 
+    // display and stack
+    out << ar_size << endl;
+    
     out << flush;
 }
 
@@ -114,7 +141,8 @@ void code_generator::epilogue(symbol *old_env)
     }
 
     /* Your code here */
-
+    out << "\t\t" << "leave" << endl;
+    out << "\t\t" << "ret" << endl;
     out << flush;
 }
 
@@ -125,6 +153,9 @@ void code_generator::epilogue(symbol *old_env)
 void code_generator::find(sym_index sym_p, int *level, int *offset)
 {
     /* Your code here */
+    symbol *sym = sym_tab->get_symbol(sym_p);
+    *level = sym->level;
+    *offset = sym->offset;
 }
 
 /*
@@ -133,6 +164,14 @@ void code_generator::find(sym_index sym_p, int *level, int *offset)
 void code_generator::frame_address(int level, const register_type dest)
 {
     /* Your code here */
+
+    /*
+    		mov	rcx, [rbp-16]
+    		mov	rcx, [rbp-16]
+		mov	rcx, [rbp-16]*/
+
+    out << "\t\t" << "mov"  << "\t" << "dest," << "\t" << "[rdp-" << level*STACK_WIDTH << "]" << "\t" << endl;
+
 }
 
 /* This function fetches the value of a variable or a constant into a
@@ -140,6 +179,18 @@ void code_generator::frame_address(int level, const register_type dest)
 void code_generator::fetch(sym_index sym_p, register_type dest)
 {
     /* Your code here */
+
+    symbol* s = sym_tab->get_symbol(sym_p);
+
+    
+    if(s->tag==SYM_CONST) {
+        
+
+    } else if(s->tag==SYM_VAR || s->tag==SYM_PARAM) {
+
+    }
+
+
 }
 
 void code_generator::fetch_float(sym_index sym_p)
