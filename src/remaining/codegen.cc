@@ -170,7 +170,7 @@ void code_generator::frame_address(int level, const register_type dest)
     		mov	rcx, [rbp-16]
 		mov	rcx, [rbp-16]*/
 
-    out << "\t\t" << "mov"  << "\t" << "dest," << "\t" << "[rdp-" << level*STACK_WIDTH << "]" << "\t" << endl;
+    out << "\t\t" << "mov"  << "\t" << reg[dest] << ", " << "[rdp-" << level*STACK_WIDTH << "]" << "\t" << endl;
 
 }
 
@@ -184,18 +184,48 @@ void code_generator::fetch(sym_index sym_p, register_type dest)
 
     
     if(s->tag==SYM_CONST) {
-        
+        constant_symbol* cons = s->get_constant_symbol();
+        out <<"\t\t" << "mov" << "\t" << reg[dest] << ", " << cons->const_value.ival << endl;
 
     } else if(s->tag==SYM_VAR || s->tag==SYM_PARAM) {
 
-    }
+        int level, offset;
+        // we initialize the level and offset to find the variable
+        find(sym_p, &level, &offset);
+        // get the adress of the frame at the correct level
+        frame_address(level, RCX);
 
+        // 		mov	rax, [rcx+16]
+        // move dest, [rcx + offset*STACK_WIDTH]
+        out << "\t\t" << reg[dest] << ", [" << "rcx+" << offset*STACK_WIDTH << "]" << endl;
+    }
 
 }
 
 void code_generator::fetch_float(sym_index sym_p)
 {
     /* Your code here */
+     symbol* s = sym_tab->get_symbol(sym_p);
+
+    
+    if(s->tag==SYM_CONST) {
+        constant_symbol* cons = s->get_constant_symbol();
+        out <<"\t\t" << "mov" << "\t" << reg[dest] << ", " << cons->const_value.rval << endl;
+
+    } else if(s->tag==SYM_VAR || s->tag==SYM_PARAM) {
+
+        int level, offset;
+        // we initialize the level and offset to find the variable
+        find(sym_p, &level, &offset);
+        // get the adress of the frame at the correct level
+        frame_address(level, RCX);
+
+        // 		mov	rax, [rcx+16]
+        // move dest, [rcx + offset*STACK_WIDTH]
+    //    out << "\t\t" << "fld" << "\t" << "qword ptr [" << reg[rcx] << endl;
+    }
+
+
 }
 
 
